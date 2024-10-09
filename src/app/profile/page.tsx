@@ -13,6 +13,8 @@ const Profile: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState<boolean>(false); 
   const [isSaving, setIsSaving] = useState<boolean>(false); 
+  const [addressError, setAddressError] = useState<string | null>(null); 
+
   
   
   const [formData, setFormData] = useState<Partial<IUser>>({}); 
@@ -58,12 +60,58 @@ const Profile: React.FC = () => {
   if (error) return <div>{error}</div>;
   if (!user) return <div>Loading...</div>;
 
+  const validateAddress = async (address: string) => {
+    const response = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(address)}&limit=1`);
+    const data = await response.json();
+    
+    // If no features are returned, address is not valid
+    if (!data.features.length) {
+      setAddressError('Invalid address.');
+      return false;
+    }
+
+    // Check if the address is within 50km of Paris (48.8566, 2.3522)
+    const parisCoords = { lat: 48.8566, lon: 2.3522 };
+    const addressCoords = data.features[0].geometry.coordinates;
+
+    const distance = getDistance(parisCoords.lat, parisCoords.lon, addressCoords[1], addressCoords[0]);
+    if (distance > 50000) { // distance in meters
+      setAddressError('The address must be within 50 km of Paris.');
+      return false;
+    }
+
+    setAddressError(null); // Clear any previous errors
+    return true;
+  };
+
+  const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+    const R = 6371e3; // metres
+    const φ1 = lat1 * Math.PI/180; // φ in radians
+    const φ2 = lat2 * Math.PI/180;
+    const Δφ = (lat2-lat1) * Math.PI/180;
+    const Δλ = (lon2-lon1) * Math.PI/180;
+
+    const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+              Math.cos(φ1) * Math.cos(φ2) *
+              Math.sin(Δλ/2) * Math.sin(Δλ/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+    return R * c; // in metres
+  };
+
   const handleEditClick = () => {
     setIsEditing(!isEditing);
   };
 
   const handleSaveClick = async () => {
     if (!user) return;
+
+     // Validate the address before proceeding
+     const isAddressValid = await validateAddress(formData.adresse || '');
+      if (!isAddressValid) {
+        setAddressError("L'adresse de l'utilisateur doit être située à moins de 50 km de Paris");
+        return;
+      }
 
     setIsSaving(true); 
 
@@ -155,8 +203,8 @@ const Profile: React.FC = () => {
                 type="text"
                 value={formData.adresse || ''} 
                 onChange={(e) => setFormData({...formData, adresse: e.target.value})}
-                disabled={!isEditing} 
-              />
+                disabled={!isEditing} /> 
+                {addressError && <span className="text-red-500">{addressError}</span>}
             </div>
             
             <div className="pb-4">
