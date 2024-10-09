@@ -58,8 +58,26 @@ const Profile: React.FC = () => {
   }, []);
 
   if (error) return <div>{error}</div>;
-  if (!user) return <div>Loading...</div>;
-
+  
+  if (!user) return (
+    <div 
+      aria-label="Loading..." 
+      role="status" 
+      className="flex items-center justify-center h-screen"
+    >
+      <svg className="h-12 w-12 animate-spin stroke-gray-500" viewBox="0 0 256 256">
+        <line x1="128" y1="32" x2="128" y2="64" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+        <line x1="195.9" y1="60.1" x2="173.3" y2="82.7" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+        <line x1="224" y1="128" x2="192" y2="128" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+        <line x1="195.9" y1="195.9" x2="173.3" y2="173.3" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+        <line x1="128" y1="224" x2="128" y2="192" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+        <line x1="60.1" y1="195.9" x2="82.7" y2="173.3" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+        <line x1="32" y1="128" x2="64" y2="128" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+        <line x1="60.1" y1="60.1" x2="82.7" y2="82.7" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+      </svg>
+    </div>
+  );
+  
   const validateAddress = async (address: string) => {
     const response = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(address)}&limit=1`);
     const data = await response.json();
@@ -75,12 +93,12 @@ const Profile: React.FC = () => {
     const addressCoords = data.features[0].geometry.coordinates;
 
     const distance = getDistance(parisCoords.lat, parisCoords.lon, addressCoords[1], addressCoords[0]);
-    if (distance > 50000) { // distance in meters
+    if (distance > 50000) { 
       setAddressError('The address must be within 50 km of Paris.');
       return false;
     }
 
-    setAddressError(null); // Clear any previous errors
+    setAddressError(null); 
     return true;
   };
 
@@ -96,7 +114,7 @@ const Profile: React.FC = () => {
               Math.sin(Δλ/2) * Math.sin(Δλ/2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
-    return R * c; // in metres
+    return R * c; 
   };
 
   const handleEditClick = () => {
@@ -106,7 +124,6 @@ const Profile: React.FC = () => {
   const handleSaveClick = async () => {
     if (!user) return;
 
-     // Validate the address before proceeding
      const isAddressValid = await validateAddress(formData.adresse || '');
       if (!isAddressValid) {
         setAddressError("L'adresse de l'utilisateur doit être située à moins de 50 km de Paris");
