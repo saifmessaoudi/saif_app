@@ -52,6 +52,7 @@ export default function Home() {
                 setMessage(data.message || "Login failed.");
             }
         } catch (error) {
+            console.error("An unexpected error occurred:", error);
             setError(true);
             setMessage("An error occurred. Please try again.");
         }

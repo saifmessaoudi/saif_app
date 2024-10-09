@@ -16,7 +16,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ message: 'No token provided' }, { status: 401 });
     }
 
-    const decoded: any = jwt.verify(token, process.env.JWT_SECRET as string);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as jwt.JwtPayload & { userId: string };
     console.log('Decoded token:', decoded);
 
     const userId = decoded.userId;
@@ -45,7 +45,7 @@ export async function PUT(req: Request) {
       return NextResponse.json({ message: 'No token provided' }, { status: 401 });
     }
 
-    const decoded: any = jwt.verify(token, process.env.JWT_SECRET as string);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as jwt.JwtPayload & { userId: string };
     const userId = decoded.userId;
 
     // Extract updated user info from the request body
