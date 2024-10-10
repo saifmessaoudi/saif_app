@@ -22,7 +22,6 @@ export default function Home() {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        const formattedValue = name === "dateDeNaissance" ? new Date(value).toISOString().substring(0, 10) : value;
 
         setFormData(prevState => ({
             ...prevState,
@@ -107,6 +106,7 @@ export default function Home() {
                 setError(true);
             }
         } catch (error) {
+            console.error('An unexpected error occurred:', error);
             setMessage("An error occurred. Please try again.");
             setError(true);
         } finally {
