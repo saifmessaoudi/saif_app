@@ -25,3 +25,37 @@ body {
     text-wrap: balance;
   }
 }
+
+
+/* Styling the signup input field */
+.signup-date-input {
+  color: white; /* Changes the input text color to white */
+  background-color: transparent; /* Keep background transparent or any color */
+  padding: 5px; /* Adjust padding to fit your layout */
+}
+
+/* Change the color of the calendar icon in some browsers */
+.signup-date-input::-webkit-calendar-picker-indicator {
+  filter: invert(1); /* Inverts the color to white (on supporting browsers) */
+}
+
+/* Ensure focus state also looks good */
+.signup-date-input:focus {
+  border-color: black;
+  outline: none;
+}
+/* Styling the edit input field */
+.edit-date-input {
+  color: black; /* Changes the input text color to white */
+  background-color: transparent; /* Keep background transparent or any color */
+  padding: 5px; /* Adjust padding to fit your layout */
+}
+
+input[type="date"].edit-date-input::-webkit-calendar-picker-indicator {
+  filter: invert(0); /* Inverts the color to white (on supporting browsers) */
+}
+/* Ensure focus state also looks good */
+.edit-date-input:focus {
+  border-color: black;
+  outline: none;
+}

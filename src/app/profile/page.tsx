@@ -77,7 +77,7 @@ const Profile: React.FC = () => {
       </svg>
     </div>
   );
-  
+
   const validateAddress = async (address: string) => {
     const response = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(address)}&limit=1`);
     const data = await response.json();
@@ -165,18 +165,30 @@ const Profile: React.FC = () => {
     }
   };
 
+  const handleLogoutClick = () => {
+    localStorage.removeItem('token');
+    window.location.href = '/'; 
+  };
+
   return (
     <div className="h-full ">
             <ToastContainer />
       <div className="border-b-2 block md:flex">
         <div className="w-full md:w-2/5 p-4 sm:p-6 lg:p-8 bg-white shadow-md">
-          <div className="flex justify-between">
+          <div className="flex ">
             <span className="text-xl font-semibold block">Your Profile {user?.nom}</span>
             <button 
               onClick={handleEditClick} 
-              className="-mt-2 text-md font-bold text-white bg-green-700 rounded-full px-5 py-2 hover:bg-gray-800"
+              className="-mt-2 text-md ml-44 font-bold text-white bg-green-700 rounded-full px-5 py-2 hover:bg-gray-800"
             >
               {isEditing ? 'Cancel' : 'Edit'}
+            </button>
+
+            <button 
+              onClick={handleLogoutClick} 
+              className="-mt-2 text-md font-bold text-white bg-red-700 rounded-full px-5 py-2 hover:bg-gray-800"
+            >
+              Logout
             </button>
           </div>
           <span className="text-gray-600 pt-4 block opacity-70">Email : {user?.email}</span>
@@ -225,11 +237,11 @@ const Profile: React.FC = () => {
             </div>
             
             <div className="pb-4">
-              <label htmlFor="dateDeNaissance" className="font-semibold text-gray-700 block pb-1">Date de naissance</label>
+              <label  className="font-semibold text-gray-700 block pb-1">Date de naissance</label>
               <input 
-                id="dateDeNaissance" 
-                className="border-1 rounded-r px-4 py-2 w-full" 
+                className="edit-date-input border-1 rounded-r px-4 py-2 w-full" 
                 type="date"
+                name = "dateDeNaissance"
                 value={formData.dateDeNaissance ? new Date(formData.dateDeNaissance).toISOString().split('T')[0] : ''} 
                 onChange={(e) => setFormData({...formData, dateDeNaissance: e.target.value as unknown as Date})} 
                 disabled={!isEditing} 
