@@ -78,8 +78,9 @@ export default function Home() {
                     <div className="flex flex-col p-6">
                         <h3 className="text-xl font-semibold leading-6 tracking-tighter">Login</h3>
                         <p className="mt-1.5 text-sm font-medium text-white/50">
-                            Welcome back, enter your credentials to continue.
+                            Please login with admin@gmail.com:adminadmin or Register !
                         </p>
+
                     </div>
                     <div className="p-6 pt-0">
                         <form onSubmit={handleSubmit}>
